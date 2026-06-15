@@ -1,0 +1,12 @@
+# ── Model registry — cluster ──────────────────────────────────────────────────
+# Maps model keys (e.g. "strong") to their name and endpoint.
+# Referenced by rollout.actor.model, rollout.descriptor.model,
+# optimisation.ba.model, optimisation.mutator.model, etc.
+#
+# endpoint: null means endpoints are discovered dynamically via
+# find_all_gpu_servers() / ~/hlp_ports.txt at runtime.
+# Override with a static URL for testing: endpoint: http://gpu01:8000/v1
+
+strong:
+  name: gpt-oss-20b          # Model identifier passed to the OpenAI client.
+  endpoint: null              # null = dynamic discovery via hlp_ports.txt.

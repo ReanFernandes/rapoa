@@ -1,0 +1,69 @@
+env: babyai
+models: local
+agent: descriptor_actor
+
+run_name: spa_guided
+resume: true
+log_root: optimization_runs
+eval_log_root: logs_fresh_eval_optimised
+
+experiments:
+
+  # ── Main conditions ───────────────────────────────────────────────────────────
+
+  # HSP — high selection pressure (δ=0.05, validation_bag)
+  - type: spa
+    prompt_variant: rich
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # LSP — low selection pressure (δ=0.05, train_signal)
+  - type: spa
+    prompt_variant: rich
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # Always-accept (δ=−∞) — acceptance criterion ablation
+  - type: spa
+    prompt_variant: rich
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # ── Module ablations ─────────────────────────────────────────────────────────
+
+  # Actor-only — BA restricted to actor module
+  - type: spa
+    prompt_variant: rich
+    module_constraint: actor
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # Descriptor-only — BA restricted to descriptor module
+  - type: spa
+    prompt_variant: rich
+    module_constraint: descriptor
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag

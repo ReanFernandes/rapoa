@@ -1,0 +1,40 @@
+## Environment: BabyAI / MiniGrid
+
+### World structure
+2D grid world. The agent occupies one cell and faces one of four compass
+directions (right, down, left, up). Only the cells directly in front of the
+agent are visible — the observation is a 7x7 partial window, not the full map.
+
+### Observation format
+Positions in the observation are relative to the agent's current facing
+direction. "1 step forward" always means one step in the direction the agent
+is currently facing, regardless of compass orientation. Left and right are
+also relative to facing — not compass directions.
+
+The agent is always at position (row=6, col=3) in the 7x7 view. Row 0 is
+directly ahead. Cells behind row 6 are not visible.
+
+### Action space
+There are exactly 7 valid actions:
+  turn left  — rotate 90° left  (no movement, only changes facing direction)
+  turn right — rotate 90° right (no movement, only changes facing direction)
+  go forward — move one step in the direction currently being faced
+  pick up    — pick up the object directly 1 step ahead
+  drop       — drop the object currently being carried
+  toggle     — open or unlock the door directly 1 step ahead
+  done       — declare the task complete (only use when win condition is met)
+
+There is no action for moving sideways, backward, or in a compass direction.
+"go forward" is the only action that changes the agent's position.
+
+### Physical constraints
+- The agent cannot move through walls or closed/locked doors.
+- Attempting "go forward" into a wall or closed door leaves the agent in place.
+- A door must be toggled (opened) before the agent can move through it.
+- A locked door requires the matching key to be carried before toggling.
+- Only one object can be carried at a time.
+
+### Partial observability
+Objects outside the 7x7 window are not visible. Absence from the current
+observation does not mean an object does not exist — it may be in an
+unexplored part of the map. Never assume the target is absent; explore.

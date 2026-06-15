@@ -1,0 +1,34 @@
+env: babyai
+models: local
+agent: descriptor_actor
+
+run_name: smoke_test
+resume: false
+log_root: optimization_runs
+eval_log_root: logs_fresh_eval_optimised
+
+# Override defaults to make the run as short as possible
+optimisation:
+  opt_cycles: 2
+  ba_episodes: 3       # v_bag = 3 x 2 = 6 episodes
+  max_skip_resample: 2
+  t_size: 6
+
+rollout:
+  workers: 12    # v_bag+t_size = 6+6 = 12 → all env_round_0 episodes in one batch
+
+# Single task only
+tasks:
+  - mixed_train_goto
+
+experiments:
+  # One SPA experiment: HSP, rich, standard threshold
+  - type: spa
+    prompt_variant: rich
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag

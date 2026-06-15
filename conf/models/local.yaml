@@ -1,0 +1,7 @@
+# ── Model registry — local ────────────────────────────────────────────────────
+# Use this for local dev/testing with a vLLM server on localhost.
+# Switch to this from the runnable config: set models: local
+
+strong:
+  name: gpt-oss-20b          # Model identifier passed to the OpenAI client.
+  endpoint: http://localhost:8000/v1

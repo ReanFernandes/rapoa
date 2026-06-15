@@ -1,0 +1,107 @@
+# ── Top-level config template ─────────────────────────────────────────────────
+# Copy this to conf/configs/my_run.yaml and fill in run_name + experiments.
+# Base blocks are loaded from their respective conf/ subdirectories and merged
+# with any overrides you define inline here.
+#
+# Run with:
+#   python run_experiments/run_pipeline.py conf/configs/my_run.yaml
+#   python run_experiments/run_pipeline.py conf/configs/my_run.yaml --dry-run
+
+# ── Block selectors ───────────────────────────────────────────────────────────
+# These select which base config file to load for each block.
+
+env: babyai             # Values: babyai (others future). Selects conf/env/*.yaml
+                        # and sets the default task list for this run.
+
+models: cluster         # Values: cluster | local. Selects conf/models/*.yaml.
+                        # cluster = dynamic endpoint discovery via hlp_ports.txt.
+                        # local   = http://localhost:8000/v1 for dev testing.
+
+agent: descriptor_actor # Values: descriptor_actor | balrog | balrog_short_history.
+                        # Selects the agent architecture for SPA experiments.
+                        # Individual balrog experiment entries override this.
+
+# ── Run identity ──────────────────────────────────────────────────────────────
+run_name: null          # REQUIRED. Used as the campaign prefix in log paths:
+                        # {log_root}/{run_name}_{YYYYMMDD}/{slug}/{task}/
+
+resume: false           # true  = skip any (opt or eval) phase already complete.
+                        # false = re-run everything from scratch.
+
+log_root: optimization_runs          # Root directory for optimisation run logs.
+eval_log_root: logs_fresh_eval_optimised  # Root directory for fresh eval logs.
+
+# ── Task override (optional) ──────────────────────────────────────────────────
+# By default, all tasks for the selected env are run. Override here to run a
+# subset. Task names must match filenames in conf/task/{env}/.
+#
+# tasks:
+#   - mixed_train_goto
+#   - mixed_train_pickup
+
+# ── Block overrides (optional) ────────────────────────────────────────────────
+# Any field from conf/rollout/, conf/optimisation/, or conf/evaluation/ can be
+# overridden inline. Only the fields you specify are changed; others keep their
+# defaults from the base config file.
+#
+# Example — run 100 cycles with more workers:
+# optimisation:
+#   opt_cycles: 100
+# rollout:
+#   workers: 30
+
+# ── Experiments ───────────────────────────────────────────────────────────────
+# Each entry is one experimental condition. All entries share the block settings
+# above and run in parallel. See conf/configs/main/spa_guided.yaml for a full example.
+#
+# type: spa | balrog
+#
+# For type: spa —
+#   prompt_variant:    rich | minimal
+#                      Which prompt files to use. rich = handcrafted (default).
+#                      minimal = BALROG-style one-liner (for comparison).
+#
+#   module_constraint: both | actor | descriptor
+#                      Restricts which module the BA may optimise.
+#                      both       = free choice (standard SPA).
+#                      actor      = only the actor prompt is mutated.
+#                      descriptor = only the descriptor prompt is mutated.
+#
+#   acceptance:
+#     rule:                mean | wilcoxon
+#                          Comparison method for challenger vs incumbent.
+#                          mean     = simple mean reward improvement threshold.
+#                          wilcoxon = one-sided Wilcoxon signed-rank test
+#                                     (requires scipy; also checks reward_threshold).
+#
+#     reward_threshold:    float, e.g. 0.05 | 0.0 | -.inf
+#                          Minimum mean reward improvement to accept a challenger.
+#                          -.inf = always accept (never reject based on threshold).
+#                          0.0   = accept any non-negative improvement.
+#                          0.05  = paper default (5% mean improvement required).
+#
+#     min_discordant_pairs: int, e.g. 4 | 0
+#                          Minimum number of episodes where one agent beats the
+#                          other. Below this, verdict = insufficient_signal.
+#                          Set to 0 with reward_threshold=0.0 to accept even
+#                          flat results (useful for floor-performance tasks).
+#
+#     p_threshold:         float, e.g. 0.05
+#                          P-value threshold for wilcoxon rule only. Ignored
+#                          when rule: mean.
+#
+#     validation_strategy: validation_bag | train_signal
+#                          Which episodes the paired V-eval uses.
+#                          validation_bag = all v_bag episodes (out-of-sample).
+#                          train_signal   = the 6 BA episodes only (in-sample).
+#                          validation_bag = HSP (high selection pressure).
+#                          train_signal   = LSP (low selection pressure).
+#
+# For type: balrog —
+#   prompt_variant:    rich | minimal  (same as spa)
+#   agent:             Override the top-level agent config for this entry.
+#     type:            balrog
+#     history_length:  int  (any value; not restricted to 1/16)
+#   acceptance:        same fields as spa
+
+experiments: []

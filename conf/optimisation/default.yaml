@@ -1,0 +1,49 @@
+# ── Optimisation loop ─────────────────────────────────────────────────────────
+
+opt_cycles: 20          # Number of BA → Mutator → Evaluator cycles to run.
+                        # Each cycle may update the incumbent prompt.
+                        # Paper used 20. Extended runs use 100.
+
+# ── V bag (validation pool) ───────────────────────────────────────────────────
+# v_bag_size is NOT configured here — it is derived as:
+#   v_bag_size = ba_episodes × max_skip_resample  (= 6 × 3 = 18 by default)
+# This ensures the V bag always has enough episodes for the full resample budget.
+
+ba_episodes: 6          # Episodes sent to the BA per opt cycle. Fixed at 6 —
+                        # manually verified to fit the BA context window.
+                        # Increasing this requires re-validating the BA prompt.
+
+max_skip_resample: 3    # How many times the optimiser may resample the V bag
+                        # and retry before giving up on this opt cycle. Together
+                        # with ba_episodes, determines v_bag_size.
+
+# ── T pool (held-out test pool) ───────────────────────────────────────────────
+t_size: 20              # Episodes in the T pool. Collected once in env_round 0,
+                        # fixed for the entire run. Used to gate acceptance.
+                        # Independent of v_bag_size — no principled coupling.
+
+# ── Seeds ─────────────────────────────────────────────────────────────────────
+env_seed: 42            # Base seed for environment episode generation.
+                        # All episode seeds are derived from this value.
+
+actor_history_window: null  # Rolling history window for actor in with_descriptor pipeline.
+                        # null (default) = single-turn; integer = multi-turn with that window.
+                        # When set, the actor receives its full recent conversation history
+                        # rather than only the current observation + injected prev_action/plan.
+
+inference_seed: 1       # Seed for LLM sampling (BA, Mutator, actor, descriptor).
+                        # Fixes non-determinism in LLM outputs across runs.
+                        # Set to null to disable (system-random).
+
+# ── BA LLM ────────────────────────────────────────────────────────────────────
+# The Behaviour Analyser reads trajectories and produces improvement candidates.
+ba:
+  model: strong         # Key into conf/models/*.yaml. Can differ from rollout.
+  max_tokens: 32768     # Large context needed: BA reads full episode trajectories.
+                        # Do not reduce — trajectories can be long.
+
+# ── Mutator LLM ───────────────────────────────────────────────────────────────
+# The Mutator rewrites the incumbent prompt based on a BA candidate.
+mutator:
+  model: strong         # Key into conf/models/*.yaml. Can differ from BA.
+  max_tokens: 8092      # Token budget for the mutator's rewrite.

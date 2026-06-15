@@ -1,0 +1,7 @@
+# ── Agent: descriptor + actor (SPA pipeline) ─────────────────────────────────
+# Two-LLM pipeline: descriptor converts observations to natural language,
+# actor reads that description and outputs an action.
+# This is the primary SPA architecture.
+
+type: descriptor_actor  # Selects the descriptor+actor pipeline in run.py.
+                        # Values: descriptor_actor | balrog

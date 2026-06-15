@@ -1,0 +1,170 @@
+env: babyai
+models: local
+agent: balrog
+
+run_name: balrog
+resume: true
+log_root: optimization_runs
+eval_log_root: logs_fresh_eval_optimised
+
+experiments:
+
+  # ── 16-step history (default BALROG setting) ──────────────────────────────────
+
+  # h16 guided — always-accept
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h16 guided — HSP (δ=0.05)
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h16 guided — LSP (δ=0.05)
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # h16 plain — always-accept
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h16 plain — HSP (δ=0.05)
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h16 plain — LSP (δ=0.05)
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 16
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # ── 1-step history ────────────────────────────────────────────────────────────
+
+  # h1 guided — always-accept
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h1 guided — HSP (δ=0.05)
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h1 guided — LSP (δ=0.05)
+  - type: balrog
+    prompt_variant: rich
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # h1 plain — always-accept
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h1 plain — HSP (δ=0.05)
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # h1 plain — LSP (δ=0.05)
+  - type: balrog
+    prompt_variant: minimal
+    agent:
+      type: balrog
+      history_length: 1
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal

@@ -1,0 +1,11 @@
+# ── Agent: BALROG RobustCoTAgent ─────────────────────────────────────────────
+# Single-LLM pipeline with rolling message history and free-form CoT reasoning.
+# Uses <|ACTION|> extraction. No descriptor — the actor sees raw observations.
+
+type: balrog            # Selects balrog_baseline pipeline in run.py.
+                        # Values: descriptor_actor | balrog
+
+history_length: 16      # Number of past steps kept in the rolling context window.
+                        # Tested values: 1, 16. Paper optimised for 16.
+                        # Only expose this parameter for balrog — descriptor_actor
+                        # does not yet support multi-step history.

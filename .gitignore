@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.egg-info/
+
+# NFS lock files
+.nfs*
+
+# Training data and model artifacts
+llm_train_data/
+llm_train_data.jsonl
+llc-lora-adapter/
+llc-lora-qwen-1.5b/
+llc-lora-smollm/
+success_trajectories.json
+*.log
+# Experiment tracking and logs
+wandb/
+records/
+logs/
+logs_baseline/
+logs_fresh_eval/
+logs_fresh_eval_blocked_candidates/
+logs_outdated/
+logs_old_test/
+logs_crosstask_eval/
+thinking_trace.json
+logs_from_cluster/
+logs_only_goto/
+logs_fresh_eval_optimised/
+logs_pipeline/
+final_paper_plotting/figures/
+final_paper_plotting/tables/
+delete_after_run/
+optimization_runs/
+optimization_runs_tandem/
+analysis/
+WinnerRetreatProject/prompts/babyai/agent_instructions_rich_nowincond.txt
+logs_fresh_eval_nowincond
+#hannover cluster based intsructions
+Cluster-run-inst.md 
+paper/
+gen/
+possible_things_to_explore.md
+.env.example
+# gpu test while prototyping
+test-gpu.py
+
+# Internal working documents — kept on disk for context, excluded from repo
+CLAUDE.md
+HOWTO.md
+MAKEFILE
+METRICS.md
+PROGRESS_REPORT.md
+PROJECT_PROPOSAL.md
+RESUME_INSTRUCTIONS.md
+SCRATCHPAD_analysis.md
+INSUFFICIENT_SIGNAL_AUDIT.md
+experiment_observations.md
+paper_discussion.md
+reformat_instructions.md
+MAIN_paper_draft.txt
+
+# Paper artefacts
+appendix_*.tex
+gen_appendix_*.py
+codebase_rework/
+gen/
+
+# IDE / AI assistant
+.cursor/
+.claude/
+external/
+.DS_Store
+server.log
+thresh_sweep_run.log

@@ -1,0 +1,32 @@
+name: babyai
+adapter_class: src.environment.minigrid.MiniGridAdapter
+tasks:
+  - mixed_train_goto
+  - mixed_train_pickup
+  - mixed_train_open
+  - mixed_train_putnext
+  - mixed_train_pick_up_seq_go_to
+
+actions:
+  - turn left
+  - turn right
+  - go forward
+  - pick up
+  - drop
+  - toggle
+  - done
+
+directions:
+  - right
+  - down
+  - left
+  - up
+
+obs:
+  mission: mission
+  direction: direction
+  scene_text: text.long_term_context
+
+inventory:
+  type: single_slot
+  source: env.unwrapped.carrying

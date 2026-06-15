@@ -1,0 +1,121 @@
+env: babyai
+models: local
+agent: descriptor_actor
+
+run_name: threshold_sweep_h16
+resume: true
+log_root: optimization_runs
+eval_log_root: logs_fresh_eval_optimised
+
+# Threshold sensitivity sweep for SPA guided with 16-step actor history window.
+# Mirrors threshold_sweep.yaml but with actor_history_window: 16.
+
+experiments:
+
+  # δ=0.00 — HSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.0
+      min_discordant_pairs: 0
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # δ=0.00 — LSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.0
+      min_discordant_pairs: 0
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # δ=0.02 — HSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.02
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # δ=0.02 — LSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.02
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # δ=0.05 — HSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # δ=0.05 — LSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # δ=0.10 — HSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.10
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # δ=0.10 — LSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: 0.10
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # Always-accept — LSP
+  - type: spa
+    prompt_variant: rich
+    actor_history_window: 16
+    module_constraint: both
+    acceptance:
+      rule: mean
+      reward_threshold: -.inf
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: train_signal

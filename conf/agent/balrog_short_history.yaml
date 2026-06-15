@@ -1,0 +1,6 @@
+# ── Agent: BALROG RobustCoTAgent — short history variant ─────────────────────
+# Same as balrog.yaml but with history_length: 1.
+# Use this to ablate the effect of history length.
+
+type: balrog
+history_length: 1       # Single-step context — only current observation visible.

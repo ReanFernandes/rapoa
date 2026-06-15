@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Poll ~/hlp_ports.txt until at least one vLLM port is reachable, then run
+# the h16 eval fix: archive bad single_turn results, re-eval all 9 slugs with
+# the patched script (agent_multi_turn), and run the non-opt h16 baseline.
+#
+# Usage (from project root, run in background):
+#   nohup bash run_experiments/run_when_server_ready.sh > logs/run_when_ready.log 2>&1 &
+#   echo $!   # note the PID if you want to kill it later
+#
+# The script exits cleanly if the server never comes up within --timeout seconds.
+#
+# Options:
+#   --poll-interval   Seconds between port checks (default: 30)
+#   --timeout         Give up after this many seconds (default: 14400 = 4h)
+#   --ports-file      Path to ports file (default: ~/hlp_ports.txt)
+
+set -e
+
+POLL_INTERVAL=30
+TIMEOUT=14400
+NODES_FILE="$HOME/vllm_nodes.txt"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --poll-interval) POLL_INTERVAL="$2"; shift 2 ;;
+        --timeout)       TIMEOUT="$2";       shift 2 ;;
+        --nodes-file)    NODES_FILE="$2";    shift 2 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# ── Readiness check — any line in vllm_nodes.txt ends with READY ──────────────
+_any_node_ready() {
+    grep -q " READY$" "$NODES_FILE" 2>/dev/null
+}
+
+# ── Wait loop ──────────────────────────────────────────────────────────────────
+echo "[$(date '+%H:%M:%S')]  Watching $NODES_FILE for a READY node ..."
+elapsed=0
+while ! _any_node_ready; do
+    if [[ $elapsed -ge $TIMEOUT ]]; then
+        echo "[$(date '+%H:%M:%S')]  Timeout after ${TIMEOUT}s — giving up."
+        exit 1
+    fi
+    echo "[$(date '+%H:%M:%S')]  No READY node yet. Next check in ${POLL_INTERVAL}s (${elapsed}s elapsed)."
+    sleep "$POLL_INTERVAL"
+    elapsed=$((elapsed + POLL_INTERVAL))
+done
+
+echo "[$(date '+%H:%M:%S')]  READY nodes: $(grep ' READY$' "$NODES_FILE")"
+
+echo "[$(date '+%H:%M:%S')]  Starting h16 eval fix."
+
+# ── Step 1: archive incorrect single_turn eval results ────────────────────────
+BAD_DIR="$REPO_ROOT/logs_fresh_eval_optimised/babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627"
+if [[ -d "$BAD_DIR" ]]; then
+    echo "[$(date '+%H:%M:%S')]  Archiving bad single_turn results ..."
+    mv "$BAD_DIR" "${BAD_DIR}_SINGLE_TURN_INCORRECT"
+    echo "[$(date '+%H:%M:%S')]  Archived to $(basename ${BAD_DIR}_SINGLE_TURN_INCORRECT)"
+else
+    echo "[$(date '+%H:%M:%S')]  Bad dir already gone — skipping archive step."
+fi
+
+# ── Step 2: re-eval all 9 h16 optimised slugs ─────────────────────────────────
+echo "[$(date '+%H:%M:%S')]  Re-evaluating h16 optimised slugs ..."
+bash "$REPO_ROOT/run_experiments/run_optimised_eval.sh" \
+    --opt-runs-dir optimization_runs \
+    --log-root     logs_fresh_eval_optimised \
+    --episodes     20 \
+    --env-seed     500 \
+    --inference-seeds 2 3 4 5 6 7 \
+    --workers      4 \
+    --seed-batch-size 3 \
+    --run-ids \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_valbag_t000_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_valbag_t002_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_valbag_t005_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_valbag_t010_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_trainsig_t000_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_trainsig_t002_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_trainsig_t005_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_mean_trainsig_t010_rich_h16 \
+        babyai/gpt-oss-20b/thresh_sweep_h16_20260605_124627/spa_always_accept_rich_h16
+
+# ── Step 3: non-opt h16 baseline ──────────────────────────────────────────────
+echo "[$(date '+%H:%M:%S')]  Running non-opt h16 baseline ..."
+bash "$REPO_ROOT/run_experiments/run_spa_h16_baseline.sh"
+
+echo "[$(date '+%H:%M:%S')]  All done."

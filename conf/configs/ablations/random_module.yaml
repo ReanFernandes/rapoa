@@ -1,0 +1,66 @@
+env: babyai
+models: local
+agent: descriptor_actor
+
+run_name: random_module
+resume: true
+log_root: optimization_runs
+eval_log_root: logs_fresh_eval_optimised
+
+# Random module pre-selection ablation.
+# BA module attribution is replaced with a uniform random draw each cycle.
+# Provides the null hypothesis for BA's attribution quality — the gap between
+# unconstrained BA and random pre-selection isolates the value of attribution alone.
+
+tasks:
+  - mixed_train_goto
+  - mixed_train_pickup
+  - mixed_train_open
+  - mixed_train_putnext
+  - mixed_train_pick_up_seq_go_to
+
+experiments:
+
+  # Guided — LSP, δ=0.00
+  - type: spa
+    prompt_variant: rich
+    module_constraint: random
+    acceptance:
+      rule: mean
+      reward_threshold: 0.0
+      min_discordant_pairs: 0
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # Guided — HSP, δ=0.05
+  - type: spa
+    prompt_variant: rich
+    module_constraint: random
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag
+
+  # Plain — LSP, δ=0.00
+  - type: spa
+    prompt_variant: minimal
+    module_constraint: random
+    acceptance:
+      rule: mean
+      reward_threshold: 0.0
+      min_discordant_pairs: 0
+      p_threshold: 0.05
+      validation_strategy: train_signal
+
+  # Plain — HSP, δ=0.05
+  - type: spa
+    prompt_variant: minimal
+    module_constraint: random
+    acceptance:
+      rule: mean
+      reward_threshold: 0.05
+      min_discordant_pairs: 4
+      p_threshold: 0.05
+      validation_strategy: validation_bag

@@ -1,0 +1,26 @@
+# ── Episode execution mechanics ───────────────────────────────────────────────
+# These settings govern HOW episodes are run, not how many or which seeds.
+# Episode counts (ba_episodes, t_size) and seeds live in conf/optimisation/.
+
+max_steps: 64       # Maximum steps per episode before forced termination.
+                    # BabyAI default: 64. Increase for harder tasks.
+
+workers: 20         # Parallel episode workers. Set to match your largest
+                    # episode batch (typically ba_episodes × max_skip_resample
+                    # or evaluation.episodes). More workers = faster rollouts
+                    # up to available CPU/GPU capacity.
+
+# ── Actor LLM ─────────────────────────────────────────────────────────────────
+# The actor takes observations and outputs an action each step.
+actor:
+  model: strong         # Key into conf/models/*.yaml. "strong" = gpt-oss-20b.
+  max_tokens: 512       # Token budget for the actor's response (PLAN + ACTION).
+  temperature: 0.0      # Sampling temperature. 0.0 = greedy (deterministic).
+
+# ── Descriptor LLM ────────────────────────────────────────────────────────────
+# The descriptor translates raw observations into natural language for the actor.
+# Ignored when running agent: balrog (which has no descriptor).
+descriptor:
+  model: strong         # Key into conf/models/*.yaml.
+  max_tokens: 512       # Token budget for the descriptor's response.
+  temperature: 0.0      # Sampling temperature.

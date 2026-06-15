@@ -1,0 +1,30 @@
+[project]
+name = "rapoa"
+version = "0.1.0"
+description = "RAPOA: Reward-driven Automatic Prompt Optimisation for Agentic systems."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "gymnasium",
+    "minigrid",
+    "openai>=1.0",
+    "setuptools",
+    "omegaconf>=2.3.0",
+    "numpy>=1.24",
+    "pillow>=10.0",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+server = ["vllm"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
