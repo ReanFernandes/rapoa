@@ -1,4 +1,4 @@
-# Environment-Grounded Automated Prompt Optimization for LLM Game Agents
+# Environment-Grounded Automated Prompt Optimization for LLM Game Agents 
 
 This repository implements **RAPOA** (*Reward-driven Automatic Prompt Optimization for Agentic systems*), an automated prompt optimization framework for LLM agents in interactive environments. Rather than optimizing model weights, RAPOA iteratively refines agent prompts using environment returns as the optimization signal.
 
@@ -8,7 +8,7 @@ RAPOA is general: it can also be applied to monolithic agents (as demonstrated w
 
 Current testbed: [BabyAI](https://github.com/mila-iqia/babyai) / [MiniGrid](https://github.com/Farama-Foundation/MiniGrid). Long-term target: NetHack.
 
-> **Paper:** [citation placeholder]
+ **Paper:** [Environment-Grounded Automated Prompt Optimization for LLM Game Agents](https://arxiv.org/abs/2606.17838v1) 
 
 ![RAPOA pipeline diagram](Rapoa_diagram.png)
 
@@ -265,3 +265,14 @@ external/BALROG        BALROG benchmark (git submodule)
 ```
 
 Each subdirectory has its own README with further detail.
+
+## Citation 
+Please cite our work as :
+```
+@article{fernandes2026environment,
+  title={Environment-Grounded Automated Prompt Optimization for LLM Game Agents},
+  author={Fernandes, Rean Clive and Fehring, Lukas and Eimer, Theresa and Lindauer, Marius and Feurer, Matthias},
+  journal={arXiv preprint arXiv:2606.17838},
+  year={2026}
+}
+```
